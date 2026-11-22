@@ -1,4 +1,5 @@
 import hashlib
+import os
 import subprocess
 import sys
 import tempfile
@@ -24,11 +25,14 @@ class CliTest(unittest.TestCase):
         self.temp.cleanup()
 
     def run_cli(self, *args):
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
         return subprocess.run(
             [sys.executable, str(CLI), *map(str, args)],
             capture_output=True,
             text=True,
             encoding="utf-8",
+            env=env,
         )
 
     def test_hash_sha256(self):
