@@ -6,6 +6,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+    Ed25519PrivateKey,
+    Ed25519PublicKey,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "src" / "seguranca.py"
@@ -51,8 +57,25 @@ class CliTest(unittest.TestCase):
     def test_keygen_writes_pem_files(self):
         result = self.run_cli("keygen", self.private, self.public)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue(self.private.read_bytes().startswith(b"-----BEGIN PRIVATE KEY-----"))
-        self.assertTrue(self.public.read_bytes().startswith(b"-----BEGIN PUBLIC KEY-----"))
+        private_pem = self.private.read_bytes()
+        public_pem = self.public.read_bytes()
+        self.assertTrue(private_pem.startswith(b"-----BEGIN PRIVATE KEY-----"))
+        self.assertTrue(public_pem.startswith(b"-----BEGIN PUBLIC KEY-----"))
+
+        private_key = serialization.load_pem_private_key(private_pem, password=None)
+        public_key = serialization.load_pem_public_key(public_pem)
+        self.assertIsInstance(private_key, Ed25519PrivateKey)
+        self.assertIsInstance(public_key, Ed25519PublicKey)
+        self.assertEqual(
+            private_key.public_key().public_bytes(
+                serialization.Encoding.Raw,
+                serialization.PublicFormat.Raw,
+            ),
+            public_key.public_bytes(
+                serialization.Encoding.Raw,
+                serialization.PublicFormat.Raw,
+            ),
+        )
 
     def test_keygen_does_not_overwrite_existing_files(self):
         self.private.write_bytes(b"preservar")
