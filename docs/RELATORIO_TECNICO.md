@@ -7,11 +7,13 @@
 | Integrantes | Raimundo Dione; José Marques; terceira integrante pendente (máximo de 3) |
 | Turma | 8º período — Engenharia de Software |
 | Linguagem | Python 3.10+ |
-| Repositório | [github.com/DIONE1000/seguranca-grupo-01](https://github.com/DIONE1000/seguranca-grupo-01) (URL fornecida; conteúdo remoto ainda não verificado) |
+| Repositório | [github.com/DIONE1000/seguranca-grupo-01](https://github.com/DIONE1000/seguranca-grupo-01) |
 
 ## Solução e funcionalidades
 
 A CLI `src/seguranca.py` usa `cryptography` para Ed25519 e a biblioteca padrão `hashlib` para SHA-256. `keygen` grava chave privada PEM PKCS#8 sem senha e chave pública PEM SubjectPublicKeyInfo. `hash` lê bytes e imprime 64 caracteres hexadecimais minúsculos. `check` compara com referência hexadecimal. `sign` assina diretamente os bytes do arquivo e grava os 64 bytes binários da assinatura. `verify` valida esses bytes e rejeita assinaturas malformadas, adulteração e chave pública não correspondente. Os comandos de verificação retornam 0 somente quando a comparação/assinatura é válida; divergência retorna 1 e erro de uso/arquivo/chave retorna código diferente de zero (2 para erros tratados). Mensagens de erro são apresentadas em português.
+
+O código da ferramenta está em `src/seguranca.py`, os testes automatizados em `tests/`, o arquivo de exemplo em `exemplos/` e as dependências em `requirements.txt`.
 
 ## Testes realizados
 
