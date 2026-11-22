@@ -13,24 +13,26 @@
 
 ### Bibliotecas utilizadas
 
-Para desenvolvermos a ferramenta, combinamos módulos da biblioteca padrão do Python com a dependência externa `cryptography`. Os módulos padrão já acompanham o interpretador; a dependência externa precisa constar em `requirements.txt` e ser instalada.
+Para desenvolver a ferramenta, combinamos módulos da biblioteca padrão do Python com uma dependência externa. Os módulos padrão já acompanham o interpretador; instalamos `cryptography`, a única biblioteca externa, por meio de `requirements.txt`.
 
-| Origem | Bibliotecas | Uso e relação com os requisitos |
+| Origem | Bibliotecas | Como as usamos |
 |---|---|---|
-| Biblioteca padrão do Python | `argparse`, `pathlib`, `os`, `sys` | Recebemos comandos e argumentos, lemos arquivos como bytes e tratamos permissões, erros e códigos de saída. |
+| Biblioteca padrão do Python | `argparse`, `pathlib`, `os`, `sys` | Interpretamos comandos, localizamos e lemos arquivos como bytes, controlamos permissões e tratamos erros e códigos de saída. |
 | Biblioteca padrão do Python | `hashlib`, `hmac` | Calculamos SHA-256 e comparamos o resultado com a referência (R02 e R03). |
-| Biblioteca padrão do Python | `__future__.annotations` | Adiamos a avaliação das anotações de tipo para facilitar a manutenção do código. |
-| Dependência externa | `cryptography` | Geramos chaves Ed25519, assinamos e verificamos arquivos e serializamos chaves PEM (R01 e R04–R06). |
+| Biblioteca padrão do Python | `__future__` | Adiamos a avaliação das anotações de tipo, o que facilita a leitura e a manutenção das funções tipadas. |
+| Dependência externa | `cryptography` | Geramos chaves Ed25519, assinamos e verificamos arquivos e serializamos as chaves PEM (R01 e R04–R06). |
 
-Usamos `argparse` para interpretar comandos — por exemplo, `check arquivo HASH_REFERENCIA` — e `pathlib` para ler os bytes originais. Para R02 e R03, `hashlib` calcula SHA-256 e `hmac.compare_digest` compara o resultado com a referência. Para R01 e R04–R06, escolhemos `cryptography`, pois a biblioteca padrão não fornece as operações Ed25519 necessárias: `Ed25519PrivateKey` gera a chave e assina; `Ed25519PublicKey` verifica; `serialization` grava e carrega PEM PKCS#8 e SubjectPublicKeyInfo; `InvalidSignature` permite rejeitar verificações inválidas. Esses componentes fazem parte do mesmo pacote. Como os outros módulos já vêm com Python, `cryptography` é a única dependência externa listada em `requirements.txt`.
+Na interface, usamos `argparse` para reconhecer os cinco comandos e receber seus argumentos. Por exemplo, em `check arquivo HASH_REFERENCIA`, ele identifica o caminho do arquivo e o hash informado. A partir desses argumentos, `pathlib` representa o caminho e permite ler o arquivo como bytes. Para os comandos `hash` e `check`, `hashlib` calcula o SHA-256 e `hmac.compare_digest` compara o resultado com o hash de referência. Essa combinação atende aos requisitos R02 e R03: calcular o resumo do arquivo e detectar divergências.
+
+Para os requisitos de assinatura, escolhemos a dependência externa `cryptography`, porque a biblioteca padrão do Python não oferece as operações Ed25519 necessárias. Com `Ed25519PrivateKey`, geramos o par de chaves e assinamos os bytes do arquivo; com `Ed25519PublicKey`, verificamos a assinatura. O módulo `serialization`, da mesma dependência, converte as chaves para os formatos PEM exigidos: PKCS#8 para a chave privada e SubjectPublicKeyInfo para a pública. Quando a verificação encontra uma assinatura inválida, `InvalidSignature` permite tratar esse resultado e rejeitá-lo. Assim, `cryptography` fornece as operações necessárias para atender a R01 e R04–R06 sem implementarmos os algoritmos criptográficos por conta própria.
 
 ### Organização do código
 
-Organizamos o código principal em `src/seguranca.py`: `build_parser()` define comandos e argumentos, e `main()` encaminha cada comando. As funções `keygen()`, `file_hash()`, `check_hash()`, `sign_file()` e `verify_file()` implementam as operações; `_read()`, `_write()`, `_load_private()` e `_load_public()` concentram a leitura/gravação binária e o carregamento das chaves. Mantivemos testes em `tests/`, exemplo em `exemplos/` e evidências em `docs/evidencias/`.
+Concentramos o código principal em `src/seguranca.py`. Em `build_parser()` definimos os cinco comandos e a ordem dos argumentos; em `main()` encaminhamos cada comando para a operação correspondente. Organizamos as operações em `keygen()`, `file_hash()`, `check_hash()`, `sign_file()` e `verify_file()`. As funções auxiliares `_read()`, `_write()`, `_load_private()` e `_load_public()` cuidam da leitura e gravação binária e do carregamento das chaves. Mantivemos os testes em `tests/`, o arquivo de exemplo em `exemplos/` e as evidências em `docs/evidencias/`.
 
 ### Principais decisões técnicas
 
-Decidimos processar bytes sem normalização, usar SHA-256 para integridade e Ed25519 para assinaturas, e adotar PEM PKCS#8 (chave privada) e SubjectPublicKeyInfo (pública). Gravamos assinaturas binárias de 64 bytes. `check` compara hashes com `hmac.compare_digest`; `keygen` não sobrescreve arquivos e, em sistemas POSIX, restringe a permissão da chave privada. Definimos códigos de saída 0 para sucesso, 1 para divergência e 2 para erro, com mensagens em português.
+Para garantir que o cálculo e a verificação considerem exatamente o conteúdo recebido, decidimos ler e processar os arquivos como bytes, sem normalização. Usamos SHA-256 para calcular o hash e Ed25519 para gerar e verificar assinaturas. Também adotamos os formatos PEM PKCS#8 e SubjectPublicKeyInfo para, respectivamente, a chave privada e a pública, além do formato binário de 64 bytes para a assinatura. No comando `check`, comparamos o hash calculado com a referência por meio de `hmac.compare_digest`. No `keygen`, impedimos a gravação sobre arquivos existentes e, em sistemas POSIX, ajustamos as permissões da chave privada para restringir seu acesso. Por fim, padronizamos os códigos de saída: 0 indica sucesso, 1 indica divergência e 2 indica erro; as mensagens correspondentes são exibidas em português.
 
 ## 7.3 Funcionalidades Implementadas (R01 a R06)
 
