@@ -6,7 +6,7 @@
 |---|---|
 | Integrantes | Raimundo Dione; José Marques; terceira integrante pendente (máximo de 3) |
 | Turma | 8º período — Engenharia de Software |
-| Linguagem | Python 3.10+ |
+| Linguagem | Python 3.14.7 |
 | Repositório | [github.com/DIONE1000/seguranca-grupo-01](https://github.com/DIONE1000/seguranca-grupo-01) |
 
 ## 7.2 Descrição da Solução
@@ -21,7 +21,7 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 ## 7.4 Testes Realizados
 
-Executados com `python -m unittest discover -s tests -v`; os sete métodos de teste passaram. Eles cobrem os seis cenários TI01–TI06: TI04 (validar assinatura original) e TI05 (rejeitar arquivo adulterado) são verificados pelo mesmo método. Dois métodos extras verificam arquivo ausente e preservação de arquivos ao gerar chaves. A saída integral está registrada em `docs/evidencias/testes-unitarios.txt`. Os testes em `tests/test_segurança.py` usam apenas documentos binários fictícios temporários.
+Executados com Python 3.14.7 via `python -m unittest discover -s tests -v`; os sete métodos de teste passaram. Eles cobrem os seis cenários TI01–TI06: TI04 (validar assinatura original) e TI05 (rejeitar arquivo adulterado) são verificados pelo mesmo método. Dois métodos extras verificam arquivo ausente e preservação de arquivos ao gerar chaves. A saída está registrada em `docs/evidencias/testes-unitarios.txt`. Os testes em `tests/test_segurança.py` usam apenas documentos binários fictícios temporários.
 
 | ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
