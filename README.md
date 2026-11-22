@@ -61,14 +61,3 @@ O módulo `cryptography` implementa Ed25519 e os formatos PEM padronizados. SHA-
 Consulte [`docs/RELATORIO_TECNICO.md`](docs/RELATORIO_TECNICO.md). Falta inserir o nome da terceira integrante.
 
 Repositório GitHub: https://github.com/DIONE1000/seguranca-grupo-01
-
-## Entrega
-
-O nome definido para o repositório é `seguranca-grupo-01`. Para identificar a versão submetida, crie e envie a tag `v1.0-entrega`:
-
-```shell
-git tag v1.0-entrega
-git push origin v1.0-entrega
-```
-
-Antes de enviar, confirme que código, dependências, instruções, relatório e testes estão no repositório e que não há chaves privadas, senhas ou credenciais.
