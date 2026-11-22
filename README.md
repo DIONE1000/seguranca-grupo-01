@@ -27,7 +27,7 @@ python -m pip install -r requirements.txt
 
 ## Execução
 
-No Windows, substitua `python` por `py` se necessário. A ordem dos argumentos segue o contrato da atividade.
+Esta seção mostra comandos genéricos para usar com um arquivo seu, como `documento.txt`. Execute um comando por vez. No Windows, substitua `python` por `py` se necessário e confirme que está usando o Python 3.14.7. Para experimentar com o arquivo incluído no repositório, siga a sequência da seção **Exemplos**. A ordem dos argumentos segue o contrato da atividade.
 
 ```shell
 python src/seguranca.py keygen chave_privada.pem chave_publica.pem
@@ -43,10 +43,11 @@ As chaves são gravadas em PEM: privada PKCS#8 sem senha e pública SubjectPubli
 
 ## Exemplos
 
+Esta sequência usa `exemplos/documento.txt`, que já está no repositório. Execute cada linha separadamente; depois de `hash`, copie o valor exibido e substitua `HASH_SHA256` no comando `check`.
+
 ```shell
 python src/seguranca.py keygen privada.pem publica.pem
 python src/seguranca.py hash exemplos/documento.txt
-# Passe o hash obtido como referência:
 python src/seguranca.py check exemplos/documento.txt HASH_SHA256
 python src/seguranca.py sign exemplos/documento.txt privada.pem documento.sig
 python src/seguranca.py verify exemplos/documento.txt publica.pem documento.sig
