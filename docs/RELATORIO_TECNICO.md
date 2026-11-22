@@ -11,13 +11,16 @@
 
 ## 7.2 Descrição da Solução
 
-`argparse` define os subcomandos e seus argumentos; `pathlib` manipula caminhos e arquivos; `hashlib` calcula SHA-256; `hmac.compare_digest` compara o hash calculado com a referência; `os` aplica permissão restrita à chave privada em sistemas POSIX; `sys` escreve erros e devolve códigos de saída; e `__future__.annotations` adia a avaliação das anotações de tipo. Esses módulos pertencem à biblioteca padrão do Python e não precisam ser instalados separadamente.
+| Origem | Módulos usados | Papel na solução |
+|---|---|---|
+| Biblioteca padrão do Python | `argparse`, `pathlib`, `hashlib`, `hmac`, `os`, `sys`, `__future__.annotations` | Interface de linha de comando, caminhos e leitura de arquivos, SHA-256 e comparação de hashes, permissões de arquivo, mensagens/códigos de saída e anotações de tipos. |
+| Dependência externa | `cryptography`: Ed25519, `serialization` e `InvalidSignature` | Geração e uso das chaves, assinatura/verificação Ed25519, codificação PEM e tratamento de assinaturas inválidas. |
 
-A dependência externa `cryptography` foi escolhida para usar uma implementação mantida de Ed25519 e serialização PEM, sem implementar os algoritmos criptográficos no projeto. `Ed25519PrivateKey` gera a chave e assina; `Ed25519PublicKey` verifica; `serialization` carrega e grava chaves PKCS#8 e SubjectPublicKeyInfo; e `InvalidSignature` identifica uma assinatura que não valida.
+O fluxo combina essas ferramentas: `argparse` encaminha cada comando, enquanto `pathlib` lê os arquivos como bytes. Para integridade, `hashlib` calcula o SHA-256 e `hmac.compare_digest` compara o resultado com a referência. `os` restringe as permissões da chave privada em sistemas POSIX, `sys` controla mensagens de erro e códigos de saída, e `__future__.annotations` adia a avaliação das anotações de tipo. Esses módulos já vêm com Python; por isso não aparecem em `requirements.txt`.
 
-Com essas bibliotecas, `keygen` grava chave privada PEM PKCS#8 sem senha e chave pública PEM SubjectPublicKeyInfo. `hash` lê bytes e imprime 64 caracteres hexadecimais minúsculos. `check` compara com referência hexadecimal. `sign` assina diretamente os bytes do arquivo e grava os 64 bytes binários da assinatura. `verify` valida esses bytes e rejeita assinaturas malformadas, adulteração e chave pública não correspondente. Os comandos de verificação retornam 0 somente quando a comparação/assinatura é válida; divergência retorna 1 e erro de uso/arquivo/chave retorna código diferente de zero (2 para erros tratados). Mensagens de erro são apresentadas em português.
+Para as operações criptográficas, foi escolhida a dependência externa `cryptography`, que fornece uma implementação mantida de Ed25519 e evita implementar os algoritmos no projeto. `Ed25519PrivateKey` gera a chave privada e assina os bytes originais; `Ed25519PublicKey` verifica a assinatura; `serialization` carrega e grava a chave privada em PEM PKCS#8 e a pública em PEM SubjectPublicKeyInfo; `InvalidSignature` permite rejeitar verificações inválidas. A assinatura resultante é gravada em formato binário com 64 bytes.
 
-O código da ferramenta está em `src/seguranca.py`, os testes automatizados em `tests/`, o arquivo de exemplo em `exemplos/` e as dependências em `requirements.txt`.
+O código da ferramenta está em `src/seguranca.py`, os testes automatizados em `tests/`, o arquivo de exemplo em `exemplos/` e as dependências em `requirements.txt`. As respostas válidas retornam código 0; divergências retornam 1; erros de uso, arquivo ou chave retornam 2, com mensagens em português.
 
 ## 7.3 Funcionalidades Implementadas (R01 a R06)
 
@@ -25,7 +28,7 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 ## 7.4 Testes Realizados
 
-Executados com Python 3.14.7 via `python -m unittest discover -s tests -v`; os sete métodos de teste passaram. Eles cobrem os seis cenários TI01–TI06: TI04 (validar assinatura original) e TI05 (rejeitar arquivo adulterado) são verificados pelo mesmo método. Dois métodos extras verificam arquivo ausente e preservação de arquivos ao gerar chaves. A saída está registrada em `docs/evidencias/testes-unitarios.txt`. Os testes em `tests/test_segurança.py` usam apenas documentos binários fictícios temporários.
+Os sete testes passaram com Python 3.14.7 (`python -m unittest discover -s tests -v`). A tabela cobre TI01–TI06; TI04 e TI05 são verificados pelo mesmo teste de assinatura. Também foram testados arquivo ausente e prevenção de sobrescrita de chaves. A saída integral está em `docs/evidencias/testes-unitarios.txt`; os testes usam apenas arquivos binários fictícios temporários.
 
 | ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
