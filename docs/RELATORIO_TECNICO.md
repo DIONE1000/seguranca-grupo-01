@@ -11,7 +11,11 @@
 
 ## 7.2 Descrição da Solução
 
-A CLI `src/seguranca.py` usa `cryptography` para Ed25519 e a biblioteca padrão `hashlib` para SHA-256. `keygen` grava chave privada PEM PKCS#8 sem senha e chave pública PEM SubjectPublicKeyInfo. `hash` lê bytes e imprime 64 caracteres hexadecimais minúsculos. `check` compara com referência hexadecimal. `sign` assina diretamente os bytes do arquivo e grava os 64 bytes binários da assinatura. `verify` valida esses bytes e rejeita assinaturas malformadas, adulteração e chave pública não correspondente. Os comandos de verificação retornam 0 somente quando a comparação/assinatura é válida; divergência retorna 1 e erro de uso/arquivo/chave retorna código diferente de zero (2 para erros tratados). Mensagens de erro são apresentadas em português.
+`argparse` define os subcomandos e seus argumentos; `pathlib` manipula caminhos e arquivos; `hashlib` calcula SHA-256; `hmac.compare_digest` compara o hash calculado com a referência; `os` aplica permissão restrita à chave privada em sistemas POSIX; `sys` escreve erros e devolve códigos de saída; e `__future__.annotations` adia a avaliação das anotações de tipo. Esses módulos pertencem à biblioteca padrão do Python e não precisam ser instalados separadamente.
+
+A dependência externa `cryptography` foi escolhida para usar uma implementação mantida de Ed25519 e serialização PEM, sem implementar os algoritmos criptográficos no projeto. `Ed25519PrivateKey` gera a chave e assina; `Ed25519PublicKey` verifica; `serialization` carrega e grava chaves PKCS#8 e SubjectPublicKeyInfo; e `InvalidSignature` identifica uma assinatura que não valida.
+
+Com essas bibliotecas, `keygen` grava chave privada PEM PKCS#8 sem senha e chave pública PEM SubjectPublicKeyInfo. `hash` lê bytes e imprime 64 caracteres hexadecimais minúsculos. `check` compara com referência hexadecimal. `sign` assina diretamente os bytes do arquivo e grava os 64 bytes binários da assinatura. `verify` valida esses bytes e rejeita assinaturas malformadas, adulteração e chave pública não correspondente. Os comandos de verificação retornam 0 somente quando a comparação/assinatura é válida; divergência retorna 1 e erro de uso/arquivo/chave retorna código diferente de zero (2 para erros tratados). Mensagens de erro são apresentadas em português.
 
 O código da ferramenta está em `src/seguranca.py`, os testes automatizados em `tests/`, o arquivo de exemplo em `exemplos/` e as dependências em `requirements.txt`.
 
