@@ -40,17 +40,18 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 ## 7.4 Testes Realizados
 
-Executamos sete testes automatizados com Python 3.14.7 (`python -m unittest discover -s tests -v`), todos aprovados. Cada linha da tabela corresponde a um método de teste. O teste de assinatura também verifica que a assinatura deixa de ser válida após a alteração do arquivo. Os testes usam arquivos binários fictícios em diretórios temporários. A saída completa está em `docs/evidencias/testes-unitarios.txt`.
+Executamos sete métodos de teste automatizados com Python 3.14.7 (`python -m unittest discover -s tests -v`), todos aprovados. A tabela relaciona os seis cenários mínimos do enunciado (TI01–TI06) e dois testes adicionais (TA01–TA02). TI04 e TI05 são verificados pelo mesmo método de teste, que assina e valida o arquivo original e, depois, confirma a rejeição após adulteração. Os testes usam arquivos binários fictícios em diretórios temporários. A saída completa está em `docs/evidencias/testes-unitarios.txt`.
 
 | ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
 | TI01 | Hash SHA-256 do arquivo | Passou; igual ao SHA-256 independente do conteúdo | `test_hash_sha256` |
 | TI02 | Alterar arquivo e comparar hash anterior | Passou; divergência e código não zero | `test_check_matches_and_detects_changed_file` |
 | TI03 | Gerar chaves Ed25519 | Passou; arquivos PEM PKCS#8 e SubjectPublicKeyInfo gerados | `test_keygen_writes_pem_files` |
-| TI04 | Tentar gerar chaves em caminhos já existentes | Passou; operação recusada e arquivo existente preservado | `test_keygen_does_not_overwrite_existing_files` |
-| TI05 | Assinar, verificar e alterar o arquivo | Passou; assinatura original aceita e adulteração rejeitada | `test_sign_and_verify_and_detect_tampering` |
+| TI04 | Assinar e verificar o arquivo original | Passou; assinatura válida de 64 bytes | `test_sign_and_verify_and_detect_tampering` |
+| TI05 | Alterar o arquivo após a assinatura | Passou; assinatura rejeitada | `test_sign_and_verify_and_detect_tampering` |
 | TI06 | Verificar assinatura com outra chave pública | Passou; assinatura rejeitada | `test_wrong_public_key_is_rejected` |
-| TI07 | Calcular hash de arquivo inexistente | Passou; mensagem clara e código de erro 2 | `test_missing_file_has_clear_error` |
+| TA01 | Tentar gerar chaves em caminhos já existentes | Passou; operação recusada e arquivo existente preservado | `test_keygen_does_not_overwrite_existing_files` |
+| TA02 | Calcular hash de arquivo inexistente | Passou; mensagem clara e código de erro 2 | `test_missing_file_has_clear_error` |
 
 ## 7.5 Análise Técnica e Conclusão
 
