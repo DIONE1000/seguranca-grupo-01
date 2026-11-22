@@ -11,30 +11,32 @@
 
 ## 7.2 Descrição da Solução
 
-A CLI em `src/seguranca.py` usa `argparse` para oferecer `keygen`, `hash`, `check`, `sign` e `verify`. Os módulos padrão `pathlib` e `hashlib` leem arquivos como bytes e calculam SHA-256; `hmac.compare_digest` compara o hash calculado com a referência. A dependência `cryptography` fornece Ed25519 e serialização PEM: chave privada PKCS#8, chave pública SubjectPublicKeyInfo e assinatura binária de 64 bytes.
+A CLI está em `src/seguranca.py`. `argparse` organiza os comandos e argumentos. `pathlib` representa os caminhos; `hashlib` calcula SHA-256 e `hmac.compare_digest` compara o resultado com a referência. A biblioteca `cryptography` implementa Ed25519 e a serialização PEM nos formatos PKCS#8 (privada) e SubjectPublicKeyInfo (pública).
 
-A ferramenta processa os bytes originais, sem normalização. O código de saída é 0 em caso válido, 1 para divergência ou assinatura inválida e 2 para erro de uso ou leitura. `keygen` evita sobrescrever arquivos existentes. A implementação está em `src/`, os testes automatizados em `tests/` e suas evidências em `docs/evidencias/`.
+As operações ficam nas funções `keygen`, `file_hash`, `check_hash`, `sign_file` e `verify_file`; auxiliares leem, gravam e carregam chaves. Os testes estão em `tests/test_seguranca.py`, o documento fictício em `exemplos/documento.txt` e as evidências em `docs/evidencias/`.
+
+Os arquivos são lidos como bytes, sem conversão ou normalização. SHA-256 é exibido como 64 dígitos hexadecimais minúsculos. Ed25519 assina os bytes originais, sem pré-hash feito pela aplicação, e produz assinatura binária de 64 bytes. `keygen` evita sobrescrever arquivos. Em POSIX, a chave privada recebe permissão 600; o PEM não é cifrado por senha. Os códigos são 0 para sucesso, 1 para hash divergente ou assinatura inválida e 2 para erro de uso ou leitura, com mensagens em português.
 
 ## 7.3 Funcionalidades Implementadas (R01 a R06)
 
-R01 — geração de par Ed25519; R02 — cálculo SHA-256; R03 — comparação com hash de referência; R04 — assinatura dos bytes do arquivo; R05 — verificação com a chave pública correspondente; R06 — rejeição de assinatura inválida, adulteração ou chave incompatível.
+R01 — gera par Ed25519; R02 — calcula SHA-256; R03 — compara o hash com a referência; R04 — assina o arquivo com a chave privada; R05 — verifica com a chave pública correspondente; R06 — rejeita assinatura inválida, adulteração e chave incompatível. A ferramenta não estabelece por si só a identidade do titular da chave pública.
 
 ## 7.4 Testes Realizados
 
-A suíte automatizada executou sete métodos e todos passaram. Os seis cenários mínimos estão relacionados abaixo. Os arquivos usados nos testes são fictícios e temporários. A saída completa, com data, commit, versão do Python e comando, está em `docs/evidencias/testes_automatizados.txt`.
+A suíte executou sete métodos automatizados, todos aprovados. Os seis cenários mínimos estão abaixo; TI04 e TI05 são verificados pelo mesmo método, que testa o arquivo original e depois o arquivo adulterado. Dois métodos adicionais verificam proteção contra sobrescrita e erro de arquivo ausente. Os testes usam conteúdo fictício e arquivos temporários. A saída integral, incluindo data, commit, Python e comando, está em `docs/evidencias/testes_automatizados.txt`.
 
-| ID | Cenário | Resultado | Evidência automatizada |
-|---|---|---|---|
-| TI01 | Calcular SHA-256 | Hash correto | `test_hash_sha256` — `testes_automatizados.txt` |
-| TI02 | Alterar arquivo e comparar com hash original | Divergência detectada | `test_check_matches_and_detects_changed_file` — `testes_automatizados.txt` |
-| TI03 | Gerar par de chaves | PEM válido | `test_keygen_writes_pem_files` — `testes_automatizados.txt` |
-| TI04 | Assinar e verificar arquivo original | Assinatura válida | `test_sign_and_verify_and_detect_tampering` — `testes_automatizados.txt` |
-| TI05 | Alterar arquivo após assinatura | Assinatura rejeitada | `test_sign_and_verify_and_detect_tampering` — `testes_automatizados.txt` |
-| TI06 | Verificar com outra chave pública | Assinatura rejeitada | `test_wrong_public_key_is_rejected` — `testes_automatizados.txt` |
+| ID | Cenário e resultado | Método no log de evidências |
+|---|---|---|
+| TI01 | SHA-256 calculado corretamente | [`test_hash_sha256`](evidencias/testes_automatizados.txt) |
+| TI02 | Alteração detectada ao comparar com hash original | [`test_check_matches_and_detects_changed_file`](evidencias/testes_automatizados.txt) |
+| TI03 | Chaves PEM Ed25519 válidas e correspondentes | [`test_keygen_writes_pem_files`](evidencias/testes_automatizados.txt) |
+| TI04 | Assinatura do original verificada como válida | [`test_sign_and_verify_and_detect_tampering`](evidencias/testes_automatizados.txt) |
+| TI05 | Assinatura rejeitada após adulteração | [`test_sign_and_verify_and_detect_tampering`](evidencias/testes_automatizados.txt) |
+| TI06 | Assinatura rejeitada com outra chave pública | [`test_wrong_public_key_is_rejected`](evidencias/testes_automatizados.txt) |
 
 ## 7.5 Análise Técnica e Conclusão
 
-1. **Hash isolado:** qualquer pessoa pode calcular SHA-256; sem uma referência autenticada, ele não comprova autoria.
-2. **Chaves:** a chave privada cria a assinatura; a chave pública correspondente permite verificá-la.
-3. **Alteração:** a assinatura valida os bytes assinados; alterar o arquivo faz a verificação falhar.
-4. **Produção:** seriam necessários armazenamento seguro de chaves, validação de identidade, rotação e revogação, auditoria e cópias de segurança. A ferramenta não implementa esses controles.
+1. **Autoria e hash:** SHA-256 é público e qualquer pessoa pode recalculá-lo. Sem uma referência autenticada, alguém pode alterar o documento e substituir também o hash; ele detecta diferenças, mas não prova quem criou o arquivo.
+2. **Chaves:** o titular usa a chave privada para assinar. A chave pública correspondente permite verificar a assinatura e detectar se o conteúdo mudou; sua associação à identidade do titular precisa ser confiável.
+3. **Alteração:** a assinatura cobre os bytes exatos do documento. Após qualquer mudança, a verificação desses novos bytes falha.
+4. **Uso em produção:** seria necessário cifrar e controlar o acesso à chave privada, validar a identidade e a distribuição das chaves públicas, planejar rotação e revogação, manter auditoria, cópias de segurança e recuperação. A CLI não oferece gestão de identidade, certificados, revogação, carimbo de tempo ou auditoria.
