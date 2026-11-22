@@ -5,7 +5,15 @@ CLI em Python para calcular e comparar hashes SHA-256 e gerar/verificar assinatu
 ## Requisitos
 
 - Python 3.14.7 (versão usada na execução da CLI e dos testes automatizados).
+- Git, para clonar o repositório.
 - Dependência `cryptography` listada em `requirements.txt`
+
+## Obter o projeto
+
+```shell
+git clone https://github.com/DIONE1000/seguranca-grupo-01.git
+cd seguranca-grupo-01
+```
 
 ## Instalação
 
