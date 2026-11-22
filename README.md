@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ferramenta de integridade e assinatura digital
 
 CLI em Python para calcular e comparar hashes SHA-256 e gerar/verificar assinaturas Ed25519 em arquivos. Os arquivos são sempre lidos como bytes, sem conversão ou normalização.
@@ -72,3 +73,6 @@ git push origin v1.0-entrega
 ```
 
 Antes de enviar, confirme que código, dependências, instruções, relatório e testes estão no repositório e que não há chaves privadas, senhas ou credenciais. O modelo de mensagem ao professor está em [`docs/EMAIL_ENTREGA.md`](docs/EMAIL_ENTREGA.md).
+=======
+# seguranca-grupo-01
+>>>>>>> fddf3a057b5dc9217a55a4d2791141d4eef67257
