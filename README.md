@@ -1,4 +1,3 @@
-
 # Ferramenta de integridade e assinatura digital
 
 CLI em Python para calcular e comparar hashes SHA-256 e gerar/verificar assinaturas Ed25519 em arquivos. Os arquivos são sempre lidos como bytes, sem conversão ou normalização.
@@ -40,7 +39,7 @@ As chaves são gravadas em PEM: privada PKCS#8 sem senha e pública SubjectPubli
 python src/seguranca.py keygen privada.pem publica.pem
 python src/seguranca.py hash exemplos/documento.txt
 # Passe o hash obtido como referência:
-python src/seguranca.py check exemplos/documento.txt <hash_sha256>
+python src/seguranca.py check exemplos/documento.txt HASH_SHA256
 python src/seguranca.py sign exemplos/documento.txt privada.pem documento.sig
 python src/seguranca.py verify exemplos/documento.txt publica.pem documento.sig
 ```
@@ -65,14 +64,11 @@ Repositório GitHub: https://github.com/DIONE1000/seguranca-grupo-01
 
 ## Entrega
 
-O nome definido para o repositório é `seguranca-grupo-01`. Ao final do prazo, crie e envie a tag da versão submetida:
+O nome definido para o repositório é `seguranca-grupo-01`. Para identificar a versão submetida, crie e envie a tag `v1.0-entrega`:
 
 ```shell
 git tag v1.0-entrega
 git push origin v1.0-entrega
 ```
 
-Antes de enviar, confirme que código, dependências, instruções, relatório e testes estão no repositório e que não há chaves privadas, senhas ou credenciais. O modelo de mensagem ao professor está em [`docs/EMAIL_ENTREGA.md`](docs/EMAIL_ENTREGA.md).
-=======
-# seguranca-grupo-01
->>>>>>> fddf3a057b5dc9217a55a4d2791141d4eef67257
+Antes de enviar, confirme que código, dependências, instruções, relatório e testes estão no repositório e que não há chaves privadas, senhas ou credenciais.
