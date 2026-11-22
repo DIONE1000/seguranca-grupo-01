@@ -1,0 +1,19 @@
+Data: 2026-11-22
+Commit: c7fc63f
+Python: Python 3.14.7
+Comando: .venv\Scripts\python.exe -m unittest discover -s tests -v
+Ambiente: PYTHONIOENCODING=utf-8; PYTHONUTF8=1
+
+Saída completa:
+test_check_matches_and_detects_changed_file (test_seguranca.CliTest.test_check_matches_and_detects_changed_file) ... ok
+test_hash_sha256 (test_seguranca.CliTest.test_hash_sha256) ... ok
+test_keygen_does_not_overwrite_existing_files (test_seguranca.CliTest.test_keygen_does_not_overwrite_existing_files) ... ok
+test_keygen_writes_pem_files (test_seguranca.CliTest.test_keygen_writes_pem_files) ... ok
+test_missing_file_has_clear_error (test_seguranca.CliTest.test_missing_file_has_clear_error) ... ok
+test_sign_and_verify_and_detect_tampering (test_seguranca.CliTest.test_sign_and_verify_and_detect_tampering) ... ok
+test_wrong_public_key_is_rejected (test_seguranca.CliTest.test_wrong_public_key_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 6.521s
+
+OK
