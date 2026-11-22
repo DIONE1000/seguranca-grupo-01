@@ -11,16 +11,26 @@
 
 ## 7.2 Descrição da Solução
 
-| Origem | Módulos usados | Papel na solução |
+### Bibliotecas utilizadas
+
+Para desenvolvermos a ferramenta, combinamos módulos da biblioteca padrão do Python com a dependência externa `cryptography`. Os módulos padrão já acompanham o interpretador; a dependência externa precisa constar em `requirements.txt` e ser instalada.
+
+| Origem | Bibliotecas | Uso e relação com os requisitos |
 |---|---|---|
-| Biblioteca padrão do Python | `argparse`, `pathlib`, `hashlib`, `hmac`, `os`, `sys`, `__future__.annotations` | Interface de linha de comando, caminhos e leitura de arquivos, SHA-256 e comparação de hashes, permissões de arquivo, mensagens/códigos de saída e anotações de tipos. |
-| Dependência externa | `cryptography`: Ed25519, `serialization` e `InvalidSignature` | Geração e uso das chaves, assinatura/verificação Ed25519, codificação PEM e tratamento de assinaturas inválidas. |
+| Biblioteca padrão do Python | `argparse`, `pathlib`, `os`, `sys` | Recebemos comandos e argumentos, lemos arquivos como bytes e tratamos permissões, erros e códigos de saída. |
+| Biblioteca padrão do Python | `hashlib`, `hmac` | Calculamos SHA-256 e comparamos o resultado com a referência (R02 e R03). |
+| Biblioteca padrão do Python | `__future__.annotations` | Adiamos a avaliação das anotações de tipo para facilitar a manutenção do código. |
+| Dependência externa | `cryptography` | Geramos chaves Ed25519, assinamos e verificamos arquivos e serializamos chaves PEM (R01 e R04–R06). |
 
-O fluxo combina essas ferramentas: `argparse` encaminha cada comando, enquanto `pathlib` lê os arquivos como bytes. Para integridade, `hashlib` calcula o SHA-256 e `hmac.compare_digest` compara o resultado com a referência. `os` restringe as permissões da chave privada em sistemas POSIX, `sys` controla mensagens de erro e códigos de saída, e `__future__.annotations` adia a avaliação das anotações de tipo. Esses módulos já vêm com Python; por isso não aparecem em `requirements.txt`.
+Usamos `argparse` para interpretar comandos — por exemplo, `check arquivo HASH_REFERENCIA` — e `pathlib` para ler os bytes originais. Para R02 e R03, `hashlib` calcula SHA-256 e `hmac.compare_digest` compara o resultado com a referência. Para R01 e R04–R06, escolhemos `cryptography`, pois a biblioteca padrão não fornece as operações Ed25519 necessárias: `Ed25519PrivateKey` gera a chave e assina; `Ed25519PublicKey` verifica; `serialization` grava e carrega PEM PKCS#8 e SubjectPublicKeyInfo; `InvalidSignature` permite rejeitar verificações inválidas. Esses componentes fazem parte do mesmo pacote. Como os outros módulos já vêm com Python, `cryptography` é a única dependência externa listada em `requirements.txt`.
 
-Para as operações criptográficas, foi escolhida a dependência externa `cryptography`, que fornece uma implementação mantida de Ed25519 e evita implementar os algoritmos no projeto. `Ed25519PrivateKey` gera a chave privada e assina os bytes originais; `Ed25519PublicKey` verifica a assinatura; `serialization` carrega e grava a chave privada em PEM PKCS#8 e a pública em PEM SubjectPublicKeyInfo; `InvalidSignature` permite rejeitar verificações inválidas. A assinatura resultante é gravada em formato binário com 64 bytes.
+### Organização do código
 
-O código da ferramenta está em `src/seguranca.py`, os testes automatizados em `tests/`, o arquivo de exemplo em `exemplos/` e as dependências em `requirements.txt`. As respostas válidas retornam código 0; divergências retornam 1; erros de uso, arquivo ou chave retornam 2, com mensagens em português.
+Organizamos o código principal em `src/seguranca.py`: `build_parser()` define comandos e argumentos, e `main()` encaminha cada comando. As funções `keygen()`, `file_hash()`, `check_hash()`, `sign_file()` e `verify_file()` implementam as operações; `_read()`, `_write()`, `_load_private()` e `_load_public()` concentram a leitura/gravação binária e o carregamento das chaves. Mantivemos testes em `tests/`, exemplo em `exemplos/` e evidências em `docs/evidencias/`.
+
+### Principais decisões técnicas
+
+Decidimos processar bytes sem normalização, usar SHA-256 para integridade e Ed25519 para assinaturas, e adotar PEM PKCS#8 (chave privada) e SubjectPublicKeyInfo (pública). Gravamos assinaturas binárias de 64 bytes. `check` compara hashes com `hmac.compare_digest`; `keygen` não sobrescreve arquivos e, em sistemas POSIX, restringe a permissão da chave privada. Definimos códigos de saída 0 para sucesso, 1 para divergência e 2 para erro, com mensagens em português.
 
 ## 7.3 Funcionalidades Implementadas (R01 a R06)
 
@@ -28,7 +38,7 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 ## 7.4 Testes Realizados
 
-Os sete testes passaram com Python 3.14.7 (`python -m unittest discover -s tests -v`). A tabela cobre TI01–TI06; TI04 e TI05 são verificados pelo mesmo teste de assinatura. Também foram testados arquivo ausente e prevenção de sobrescrita de chaves. A saída integral está em `docs/evidencias/testes-unitarios.txt`; os testes usam apenas arquivos binários fictícios temporários.
+Os sete testes passaram com Python 3.14.7 (`python -m unittest discover -s tests -v`). A tabela registra TI01–TI06; TI04 e TI05 compartilham o teste de assinatura. Também foram testados arquivo ausente e prevenção de sobrescrita de chaves. A saída está em `docs/evidencias/testes-unitarios.txt`; os testes usam arquivos binários fictícios temporários.
 
 | ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
