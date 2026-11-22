@@ -2,7 +2,7 @@
 
 ## 7.1 Identificação
 
-| Campo | Informação |
+| Campo | Dados |
 |---|---|
 | Integrantes | Raimundo Dione; José Marques; terceira integrante pendente (máximo de 3) |
 | Turma | 8º período — Engenharia de Software |
@@ -15,7 +15,7 @@
 
 Para desenvolver a ferramenta, combinamos módulos da biblioteca padrão do Python com uma dependência externa. Os módulos padrão já acompanham o interpretador; instalamos `cryptography`, a única biblioteca externa, por meio de `requirements.txt`.
 
-| Origem | Bibliotecas | Como as usamos |
+| Origem | Bibliotecas | Uso no projeto |
 |---|---|---|
 | Biblioteca padrão do Python | `argparse`, `pathlib`, `os`, `sys` | Interpretamos comandos, localizamos e lemos arquivos como bytes, controlamos permissões e tratamos erros e códigos de saída. |
 | Biblioteca padrão do Python | `hashlib`, `hmac` | Calculamos SHA-256 e comparamos o resultado com a referência (R02 e R03). |
