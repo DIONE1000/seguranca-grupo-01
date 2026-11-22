@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Ferramenta de integridade e assinatura digital
 
 CLI em Python para calcular e comparar hashes SHA-256 e gerar/verificar assinaturas Ed25519 em arquivos. Os arquivos são sempre lidos como bytes, sem conversão ou normalização.
