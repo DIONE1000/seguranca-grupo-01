@@ -19,7 +19,6 @@ Para desenvolver a ferramenta, combinamos módulos da biblioteca padrão do Pyth
 |---|---|---|
 | Biblioteca padrão do Python | `argparse`, `pathlib`, `os`, `sys` | Interpretamos comandos, localizamos e lemos arquivos como bytes, controlamos permissões e tratamos erros e códigos de saída. |
 | Biblioteca padrão do Python | `hashlib`, `hmac` | Calculamos SHA-256 e comparamos o resultado com a referência (R02 e R03). |
-| Biblioteca padrão do Python | `__future__` | Adiamos a avaliação das anotações de tipo, o que facilita a leitura e a manutenção das funções tipadas. |
 | Dependência externa | `cryptography` | Geramos chaves Ed25519, assinamos e verificamos arquivos e serializamos as chaves PEM (R01 e R04–R06). |
 
 Na interface, usamos `argparse` para reconhecer os cinco comandos e receber seus argumentos. Por exemplo, em `check arquivo HASH_REFERENCIA`, ele identifica o caminho do arquivo e o hash informado. A partir desses argumentos, `pathlib` representa o caminho e permite ler o arquivo como bytes. Para os comandos `hash` e `check`, `hashlib` calcula o SHA-256 e `hmac.compare_digest` compara o resultado com o hash de referência. Essa combinação atende aos requisitos R02 e R03: calcular o resumo do arquivo e detectar divergências.
@@ -40,7 +39,7 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 ## 7.4 Testes Realizados
 
-Executamos sete métodos de teste automatizados com Python 3.14.7 (`python -m unittest discover -s tests -v`), todos aprovados. A tabela relaciona os seis cenários mínimos do enunciado (TI01–TI06) e dois testes adicionais (TA01–TA02). TI04 e TI05 são verificados pelo mesmo método de teste, que assina e valida o arquivo original e, depois, confirma a rejeição após adulteração. Os testes usam arquivos binários fictícios em diretórios temporários. A saída completa está em `docs/evidencias/testes-unitarios.txt`.
+Executamos sete métodos automatizados com Python 3.14.7, todos aprovados. A tabela relaciona os cenários mínimos TI01–TI06 e dois testes adicionais (TA01–TA02). TI04 e TI05 compartilham o método que verifica a assinatura original e sua rejeição após adulteração. Os testes usam arquivos fictícios temporários; a saída completa está em `docs/evidencias/testes-unitarios.txt`.
 
 | ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
@@ -58,4 +57,4 @@ Executamos sete métodos de teste automatizados com Python 3.14.7 (`python -m un
 1. **Hash isolado:** qualquer pessoa pode calcular SHA-256; sem uma referência autenticada, o hash não identifica quem criou o documento.
 2. **Chaves:** a chave privada do signatário cria a assinatura; a chave pública correspondente permite verificá-la.
 3. **Alteração:** a assinatura valida os bytes originais; mudar qualquer byte altera o conteúdo verificado e faz a validação falhar.
-4. **Produção:** seriam necessários armazenamento e controle de acesso às chaves, identidade verificável do signatário, rotação e revogação, auditoria, carimbo de tempo e cópias de segurança. A ferramenta, sozinha, não confirma a identidade do titular nem protege uma chave privada comprometida.
+4. **Produção:** precisaríamos proteger e controlar as chaves, validar a identidade do titular e definir rotação, revogação, auditoria e cópias de segurança. A ferramenta não implementa esses controles.
