@@ -23,7 +23,7 @@ R01 — `keygen` gera o par Ed25519; R02 — `hash` calcula SHA-256; R03 — `ch
 
 Executados com `python -m unittest discover -s tests -v`; os sete métodos de teste passaram. Eles cobrem os seis cenários TI01–TI06: TI04 (validar assinatura original) e TI05 (rejeitar arquivo adulterado) são verificados pelo mesmo método. Dois métodos extras verificam arquivo ausente e preservação de arquivos ao gerar chaves. A saída integral está registrada em `docs/evidencias/testes-unitarios.txt`. Os testes em `tests/test_segurança.py` usam apenas documentos binários fictícios temporários.
 
-| ID | Cenário | Resultado observado | Evidência |
+| ID do teste | Cenário | Resultado observado | Evidência |
 |---|---|---|---|
 | TI01 | Hash SHA-256 do arquivo | Passou; igual ao SHA-256 independente do conteúdo | `test_hash_sha256` |
 | TI02 | Alterar arquivo e comparar hash anterior | Passou; divergência e código não zero | `test_check_matches_and_detects_changed_file` |
