@@ -58,6 +58,6 @@ O módulo `cryptography` implementa Ed25519 e os formatos PEM padronizados. SHA-
 
 ## Relatório técnico
 
-Consulte [`docs/RELATORIO_TECNICO.md`](docs/RELATORIO_TECNICO.md). Falta inserir o nome da terceira integrante.
+Consulte [`docs/RELATORIO_TECNICO.md`](docs/RELATORIO_TECNICO.md).
 
 Repositório GitHub: https://github.com/DIONE1000/seguranca-grupo-01
