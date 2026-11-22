@@ -49,7 +49,7 @@ Executamos sete métodos automatizados com Python 3.14.7, todos aprovados. A tab
 | TI04 | Assinar e verificar o arquivo original | Passou; assinatura válida de 64 bytes | `test_sign_and_verify_and_detect_tampering` |
 | TI05 | Alterar o arquivo após a assinatura | Passou; assinatura rejeitada | `test_sign_and_verify_and_detect_tampering` |
 | TI06 | Verificar assinatura com outra chave pública | Passou; assinatura rejeitada | `test_wrong_public_key_is_rejected` |
-| TA01 | Tentar gerar chaves em caminhos já existentes | Passou; operação recusada e arquivo existente preservado | `test_keygen_does_not_overwrite_existing_files` |
+| TA01 | Tentar gerar chaves quando um dos caminhos já existe | Passou; operação recusada e arquivo existente preservado | `test_keygen_does_not_overwrite_existing_files` |
 | TA02 | Calcular hash de arquivo inexistente | Passou; mensagem clara e código de erro 2 | `test_missing_file_has_clear_error` |
 
 ## 7.5 Análise Técnica e Conclusão
