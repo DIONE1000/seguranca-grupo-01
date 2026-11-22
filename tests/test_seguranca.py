@@ -28,6 +28,7 @@ class CliTest(unittest.TestCase):
             [sys.executable, str(CLI), *map(str, args)],
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
 
     def test_hash_sha256(self):
