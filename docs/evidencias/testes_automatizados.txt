@@ -1,8 +1,8 @@
 Data: 2026-11-22
-Commit: 022bdb9
+Commit: 9a88da0
 Python: Python 3.14.7
 Comando: .venv\Scripts\python.exe -m unittest discover -s tests -v
-Ambiente: PYTHONIOENCODING=utf-8; PYTHONUTF8 não definido
+Ambiente: nenhuma variável de codificação externa; o helper define UTF-8 para o subprocesso e sua decodificação
 
 Saída completa:
 test_check_matches_and_detects_changed_file (test_seguranca.CliTest.test_check_matches_and_detects_changed_file) ... ok
@@ -14,6 +14,6 @@ test_sign_and_verify_and_detect_tampering (test_seguranca.CliTest.test_sign_and_
 test_wrong_public_key_is_rejected (test_seguranca.CliTest.test_wrong_public_key_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 6.626s
+Ran 7 tests in 7.040s
 
 OK
